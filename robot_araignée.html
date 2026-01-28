@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="stylepage.css">
+</head>
+<body>
+    <h2>Robot Araignée</h2>
+    
+    <h3>Présentation : </h3>
+    <p>Au cours de l'année 2025, je me suis interressé à la robotique. Un robot araignée m'a semblé être un bon compromis entre difficultée et attractivitée : une gestion de plusieurs pattes pour oeuvrer un mouvement tout en étant naturel</p>
+    <p>Pour la conception de ce projet, j'ai réalisé toute la conception, du chassis au programme</p>
+
+    <h3>Chassis</h3>
+    <p>J'ai commencé par réaliser le chassis  du robot, pour cela j'ai commencé par une patte, celle-ci possède 3 articulations : le fémur, le tibia, et le pied</p>
+    <p>La force est fournie aux pattes grace à des servomoteurs</p>
+    <p>ensuite j'ai réalisé le chassis central ou est embarqué l'électronique. La principale difficulté à été de réaliser un chassis léger et résistant</p>
+    <img src="robot_fusion360.png" alt="">
+
+    <h3>Electronique</h3>
+    <p>L'électronique est consituée d'un microcontrolleur ( arduino nano 33ble cortex arm 32bit , fpu intégré ) ainsi que d'un module de pilotage de servomoteur en I2c</p>
+    <p>le système est prévu pour supporter le montage d'un batterie lithium ainsi que d'un BMS</p>
+
+    <h3>Programmation</h3>
+    <p>Pour la programmation , je suis parti sur la conception d'un moteur en temps réel , que l'arduino 33ble peut très bien gérer grace à sa puissance et sa FPU (unité qui permet de calculer des floats en une seule instruction )</p>
+    <p>Ce moteur est doté d'un séquenceur ( une table d'animation) qui va ordonner à chaque patte une position orthogonale dans le monde réel (échelle en cm). Ce système de position à été réalisé grace à une méthode s'appellant la cinématique inverse (IK)</p>
+    <p>cette méthode consiste à calculer chaque angle de rotation des pattes pour les faires parvenir à une position. Une autre fonction permet de déplacer une patte en suivant un courbe de bézier, pour un mouvement plus naturel</p>
+    <p>En combinant plusieurs séquences de mouvement on peut obtenir des mouvements du robot telle que cette marche :</p>
+     <video width="320" height="240" controls>
+    <source src="robot.mp4" type="video/mp4">
+    
+Your browser does not support the video tag.
+</video> 
+    <p>pour cet exemple, il a suffit de donner seulement 8 instructions de mouvement au moteur pour réaliser une animation de marche</p>
+
+    <h3>Conclusion</h3>
+    <p>ce projet m'a permis de progresser dans différentes catégories :</p>
+    <ul>
+        <li>dans la conception mécanique (fusion 360)</li>
+        <li>En mathématique (trigonométrie pour l'IK, courbes de bézier, gestion temporelles, utilisation de cosinus pour mouvement fluide)</li>
+        <li>En programmation (programmation de type objet, multitâches temps réels, gestion d'évennement,optimisation)</li>
+    </ul>
+    
+</body>
+</html>

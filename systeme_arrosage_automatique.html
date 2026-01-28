@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="stylepage.css">
+</head>
+<body>
+    <div class="menu">
+    <h1>Thomas Dubost</h1>
+    <h1>Menu</h1>
+    </div>
+    
+    <h2>Système d'arrosage Automatique</h2>
+     <h3>Présentation : </h3>
+     <p>Etant adepte de jardinage, je me retrouve souvent face à des problèmes au niveau de l'arrosage de mon potager : sois je ne suis pas la pour arroser, soit j'oublie</p>
+     <p>J'en ai vu une problématique, je me suis donc mit dans l'idée d'y trouver une solution</p>
+     <p>Je dévellope actuellement un système d'arrosage automatique qui n'arrose seulement si le sol est sec.</p>
+     <p>L'idée est de créer une station qui gère un réseau d'électrovannes pilotables à partir d'un calculateur. </p>
+     <p>Le cahier des charges est beaucoup plus complexe qu'un simple capteur d'humidité relié à un arduino :</p>
+     <h3>Cahier des charges</h3>
+     <ul>
+        <li>le système doit asservir une irrigation maîtrisée qui contribue à un état stable du niveau d'humidité du sol</li>
+        <li>le système doit être opérationnel h24 pendant plusieurs années tout en résistanc aux intempéries éxterieurs</li>
+        <li>le système doit être capable de détecter des défauts et de prendre lui même des décisions pour éviter des éventuels dommages aux terrain</li>
+        <li>le système doit être le plus modulaire possible pour s'adapter à diverses installations</li>
+     </ul>
+     <h3>Conception</h3>
+     <p>je suis actuellement sur la conception électronique d'une station d'arrosage :</p>
+     <img src="" alt="">
+     <p>la station est capable de :</p>
+     <ul>
+        <li>lire un réseau MODBUS de capteurs de terrains</li>
+        <li>piloter des électrovannes</li>
+        <li>communiquer en bluethooth avec les utilisateurs</li>
+        <li>sauvegarder les données de terrains</li>
+        <li>agir en fonction de l'heure / journée</li>
+     </ul>
+     <img src="board.png" alt="">
+     <img src="board2.png" alt="">
+     <img src="board3.png" alt="">
+     <h3>difficultées et enjeux</h3>
+     <p>c'est mon premier projet sérieux qui implique des enjeux de sécurité et écologiques</p>
+     <p>pour la conception de la carte, j'ai concu certaines parties dans le but de sécuriser un maximum le déclenchement des électrovannes en cas de problème technique</p>
+     <p>j'ai aussi optimisé la consommation énergétique en commutant l'alimentation de certaines fonctions secondaires, inutiles sauf au moment de l'arrosage</p>
+
+    <p>pour la suite du projet, je prévois d'y effectuer  la partie installation électrique et tuyauterie, puis avant de concevoir la partie informatique , prendre des mesures de terrain pour évaluer la réactivité de mon système</p>
+     <h3>Conclusion</h3>
+    <p>ce projet m'a permis de progresser dans différentes catégories :</p>
+    <ul>
+        <li>dans l'électronique  (utilisation de chip spécifique)</li>
+        <li>(prochainement)en informatique (freeRTos, protocole de communication,prise de décision)</li>
+        <li>(prochainement)en soudure SMD ( premier circuit en smd)</li>
+        
+    
+</body>
+</html>
