@@ -1,11 +1,7 @@
 
 
 img{
-    max-width: 800px;
-    max-height: 400px;
-     object-fit: cover;
-    width: 100%;
-    object-fit: contain;
+   
 
     
 
@@ -20,11 +16,10 @@ img{
 }
 
 .imglegend{
-    border: solid black 1px;
-    text-align: center;
-    margin-left: 16rem;
-    margin-right: 16rem;
-    padding: 0;
+    border: solid grey 1px;
+    width: fit-content;
+    padding: 1rem;
+    margin: 1rem;
 
     
     
@@ -57,4 +52,25 @@ td{
     padding: 1rem;
     
 }
+.img{
+    border: solid grey 1px;
+    width: 70%;
+    padding: 1rem;
+    margin-left: auto;
+    margin-right: auto;
 
+    margin-bottom: 1rem;
+    margin-top: 1rem;
+    
+}
+img{
+    display: block;
+     max-width: 800px;
+    max-height: 400px;
+     object-fit: cover;
+    width: 100%;
+    margin: auto;
+    object-fit: contain;
+
+
+}

@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="stylepage.css">
+     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog</title>
+</head>
+<body>
+
+    <header>
+        <h1>Titre Blog</h1>
+
+    </header>
+    <nav></nav>
+    
+    <div class="content">
+        <h2>Block A</h2>
+
+        <h3>0-Besoins</h3>
+        <p>Le besoin de ce block est de conditionner le signal pour qu'il soit le plus adapté possible au convertisseur analogique numérique.</p>
+        <p>voici le schéma de principe de ce bloc :</p>
+        <div class="imglegend"><img src="images/blocka.JPG" alt="block A">
+        <p>figure 2 : block A</p></div>
+
+        
+        <h3>2-filtre passe haut</h3>
+        <h4>a-Contexte : </h4>
+        <p>comme la plage d'alimentation du circuit est de 0-5v , tout les signaux qui sup&eacute;rieurs ou inf&eacute;rieurs &agrave; cette tension risquent de provoquer une defaillance , voire une destruction de certains composants.<br />il faut donc que tout signal se retrouve entre 0 et 5 v. <br />Un signal de guitare fait 1Vpp, soit +/- 500mv , le signal n'est pas dans la plage 0-5v.<br />La solution ici est de centrer le signal &agrave; vmax/2 , soit vref.<br />En faisant cela , je cr&eacute;&eacute; un ground virtuel &agrave; 2.5v ou le pole gnd et vcc serront maintenant -2.5v et 2.5v.<br /></p>
+        <div class="imglegend"><img src="images/sinus_centre.JPG" alt="sinus vs sinus centré sur vcc/2">
+        <p>figure 2 : sinus vs sinus centré sur vcc/2</p></div>
+
+        <p>Je dois aussi m'assurer que la composante continue du signal avant le centrage &agrave; 2.5v soit nul , car sinon &ccedil;ela metterais la suite des &eacute;tages en difficult&eacute;e.<br />La structure id&eacute;ale pour cette probl&eacute;matique est un filtre passe haut avec une composante continue en sortie.</p>
+        <div class="imglegend"><img src="images/hpf_sans_diode.JPG" alt="filtre passe haut ">
+        <p>figure 2 : filtre passe haut</p></div>
+        <h4>b-Calcul du filtre : </h4>
+        <p>vs=vref+(ve-vref)*(jwRC)/(1+jw(R+Rs)C)<br />La fr&eacute;quence de coupure de ce filtre est 1/2*pi*(RS+RC),<br />il faut choisir dans notre cas une r&eacute;sistance &eacute;lev&eacute;e pour conserver une imp&eacute;dance &eacute;lev&eacute;e pour les prochains &eacute;tages.</p>
+        <p>Une guitare poss&egrave;de une imp&eacute;dance de 50kohm.<br />je vais choisir une r&eacute;sistance de 1Mohm, une valeur courante pour ce type de traitement.</p>
+        <p>La fr&eacute;quence de coupure du filtre passe haut sera de 1hz, pour seulement filtrer la composante continue<br />en cons&eacute;quence, C=150nF</p>
+        <p><br />Le fait que Vref passe par R va centrer le signal sur Vref</p>
+        
+        <h4>c-Les Sécurités : </h4>
+        
+        <p>L'ajout de diode par la suite permet de "vider" des surtensions dans l'alimentation, si ve &gt; vcc-0.6 ou ve &lt; gnd +0.6, alors les diodes r&eacute;cup&egrave;rent le surplus et &ccedil;a sature.<br />c'est d'ailleurs sur ce ph&eacute;nom&egrave;ne que l'effet Overdrive est bas&eacute;.<br />La r&eacute;sistance RS est une protection de courant pour les diodes de s&eacute;curit&eacute;, histoire d'&eacute;viter de cr&eacute;er des court circuits, elle prot&egrave;ge donc lors de surtensions une surintensit&eacute; ou un court circuit<br />j'ai choisis 1k ohm pour imaginons un pic de 12v, donc I=12/1000 = 12mA.</p>
+        <div class="imglegend"><img src="images/schéma_hpf.JPG" alt="figure 2 : filtre passe haut + sécurités">
+        <p>figure 2 : filtre passe haut + securités</p></div>
+        <h4>d-Vérifications et Mesures</h4>
+        
+        
+        <p>diodes de clip:</p>
+        <p>on obtient un d&eacute;but de saturation &agrave; <b>vpp=3V</b>, en dessous, pas de distorsion<br />peut importe ve, le signal ne d&eacute;passe pas 0-5v dans l'ampli op, donc pas de risque de surtension dedans.</p>
+        <div class="imglegend"><img src="images/clip.JPEG" alt="clip d'un sinus">
+        <p>figure 2 : clip d'un sinus</p></div>
+        
+        
+        <h3>3-amplificateur</h3>
+
+        <h4>a-Contexte</h4>
+
+
+        <p>Prenons un signal de guitare,Celui ci oscillera entre -500mv et 500mv lors d'un jeu fort. (1vpp)</p>
+        <p>La plage que je vais dimensionner par la suite de l'adc est de 0,5V. Comme notre signal est d&eacute;ja centr&eacute; autour de 2.5V, il sera donc de 2 &agrave; 3V. Pour exploiter son plein potentiel , il faudrait le faire osciller autour de 0.5 et 4.5V. (4vpp)</p>
+        <p>Pourquoi pas 5V ? Le mieux &agrave; faire est de laisser une marge de quelques mV autour des limites d'alimentation des op&eacute;rateur amplificateur pour &eacute;viter de d&eacute;former le signal a cause du fait que de la distortion est pr&eacute;sente aux limites des op&eacute;rateurs amplificateur.</p>
+        <p>L'amplification max voulu dans ce cas serait de av=4.</p>
+        <p>Je voudrais aussi cr&eacute;er une amplification variable de 1 &agrave; 4, pour permettre de brancher des synth&eacute;s, ligne audio,...</p>
+        <p>voici le sch&eacute;ma :</p>
+        <div class="imglegend"><img src="images/schéma_ampli.JPG" alt="amplificateur non inverseur à offset">
+        <p>figure 2 : amplificateur non inverseur à offset</p></div>
+        <h4>b-Calcul</h4>
+        <p><br />ses fonction sont les suivantes :</p>
+        <p><br />vs=(vin(r1+r2)-vrefr1)/(R2)</p>
+        <p><br />av=1+r2/r1</p>
+        <p>j'ai choisis ces valeurs de r&eacute;sistances :</p>
+        <p>R2=Rfixe+Rvariable, Rfixe = 10k, Rvariable =50k</p>
+        <p>R1=20k</p>
+        <p>avec ces valeurs , av =1.5-&gt;4</p>
+        <p>J'aurais pu prendre des r&eacute;sistance de mani&egrave;re &agrave; avoir une amplification AV 1-4v, mais l'id&eacute;e dans un amplificateur audio est de garder le bruit thermique et le bruit du courant le plus faible possible : <br />si une r&eacute;sistance est faible , elle risque de g&eacute;n&eacute;rer du bruit a cause du courant qui passe fortement<br />Au contraire si elle est &eacute;lev&eacute;e, elle risque de g&eacute;nerer un bruit thermique : un = sqrt(4kTRdeltaF) , k=1.38*10^-23 (constante de boltzmann), T=298K (environ 25 degr&eacute;)</p>
+        <p>avec 1k : =50nV de bruit<br />avec 100k : =6uv de bruit</p>
+        <h4>f-Vérifications et mesures</h4>
+        <p>1 montage du sch&eacute;ma</p>
+        <p>l'amplificateur fonctionne comme convenu, le gain correspond bien &agrave; celui calcul&eacute;. J'ai utilisé un LM358, celui ci sature très vite en rail-to-rail, l'exemple montré est une amplification faible pour illustrer le bon fonctionnement (j'utiliserais un ampli plus adapté pour le circuit )</p>
+        <div class="imglegend"><img src="images/amp.JPEG" alt="amplification">
+        <p>figure 2 : amplification (j'ai mal centré les signaux )</p></div>
+        <p>2 test qualit&eacute; opamp comparaison</p>
+        <p>ici l'id&eacute;e est de voir la diff&eacute;rence de slew rate entre un opamp de haute qualit&eacute; et un standard<br />R1=5k<br />Utiliser un bon amplificateur est primordial pour ce genre d'application , de mani&egrave;re &agrave; ce qu'il ne rajoute le moins de bruit et distortion possible.<br />Je n'ai pas sous la main d'op&eacute;rateur amplificateur de haute qualit&eacute; fonctionnant de 0 &agrave; x volt (rail-to-rail), je vais donc faire des test de qualit&eacute; par la suite sur des mod&egrave;les en alim double.</p>
+        <p><u>Basse qualit&eacute;</u></p>
+        <p>LM358 : on voit en mode XY un ovale se cr&eacute;er : il y a un d&eacute;phasage du au slew rate</p>
+        <div class="imglegend"><img src="images/lm358.JPEG" alt="lm358 slew rate à 20khZ">
+        <p>lm358 slew rate à 20khZ</p></div>
+        <p>TL072 : l'ovale est beaucoup plus l&eacute;ger</p>
+        <div class="imglegend"><img src="images/tl072.JPEG" alt="tl072 slew rate à 20khZ">
+        <p>TL072 slew rate à 20khZ</p></div>
+        <p><u>Haute qualit&eacute;</u></p>
+        <p>OP272 : m&ecirc;me slew rate que le lm358</p>
+        <div class="imglegend"><img src="images/opa272.JPEG" alt="op272 slew rate à 20khZ">
+        <p>OP272 slew rate à 20khZ</p></div>
+        <p>OP27 : slew rate tr&egrave;s faible, visible &agrave; 700khz</p>
+        <div class="imglegend"><img src="images/op27.JPEG" alt="op27 slew rate à 20khZ">
+        <p>OP27 slew rate à 20khZ</p></div>
+        <div class="imglegend"><img src="images/op127hf.JPEG" alt="op272 slew rate à 700khZ">
+        <p>OP27 slew rate à 700khZ</p></div>
+
+        <p>En ce qu'il s'agit de bruit et de distortion, je n'ai pas vraiment les appareils pour mesurer cela, je vais donc me fier aux datasheet.</p>
+
+        <h3>4-filtre passe bas</h3>
+        <h4>a-Contexte : </h4>
+        <p>Ici, je désire mettre un filtre passe bas qui va permettre de filtrer toutes les fréquences supérieures à la fréquence d'échantillonage/2 , ce qui correspond à la condition de <a href="https://www.google.com/url?sa=t&source=web&rct=j&opi=89978449&url=https://fr.wikipedia.org/wiki/Th%25C3%25A9or%25C3%25A8me_d%2527%25C3%25A9chantillonnage">nyquist</a>, cette condition permet de s'assurer que des fréquences élevées ne vont pas se replier sur le signal "pur" au moment de la conversion du signal analogique en numérique ( adc ou can )</p>
+        <p>Le filtre que je vais utiliser est un filtre sallen-key d'ordre n=2, cela devrait suffire pour provoquer une atténuation asser forte au dessus de la fréquence de coupure. La fréquence d'échantillonage sera de 48khz, il faut donc une fréquence de coupure less 24khz , je choisis <b>fc=20khz</b> pour mes calculs</p>
+        <div class="imglegend"><img src="sallenkey.jpg" alt="schéma de filtre sallen key">
+        <p>figure1 : schéma d'un filtre passe bas sallen-key</p></div>
+        
+        <p>dans mon cas , <b>c1=c2=c, r1=r2=r , K=1+r4/r3, s=j2pi*f </b></p>
+        <p><u>formules correspondant à ce modèle de filtre :</u></p>
+        <p>F(p)=K/(s^2(R1R2C1C2)+s(R1C1+R2C1+R1C2(1-k))+1) fc=1/2*pi*sqrt(R1R2C1C2) Q=sqrt(R1R2C1C2)/(R1C1+R2C1+R1C2(1-K))</p>
+        <h4>b-Calcul de fc</h4>
+        <p>Nous voulons fc = <b>20khz.</b></p>
+        <p>on pose C = <b>2,2nF</b></p>
+        <p>en transformant la formule,
+            \( R = \frac{1}{2 \pi  f_c c} \)
+         </p>
+         <p>
+        application:
+         \( R = \frac{1}{2 \pi  20000  \times 2^{-9}} \), <br>
+        <b>
+        R=3617ohm
+        </b>
+        </p>
+        <h4>c-Détermination du coefficient K</h4>
+        <p>un filtre d'ordre 2 peut impliquer de la <u>résonnance</u> , or ici nous recherchons la reponse la plus plate possible avant fc.
+        pour maintenir un réponse la plus plate possible , Q doit être égal a \( \frac { \sqrt{2}}{2} \) soit <b>0.707</b></p>
+         <p>\[Q = \frac{\sqrt{R_1 R_2 C_1 C_2}}
+         {R_1 C_1 + R_2 C_1 + R_1 C_2 (1 - K)}\]</p>
+        <p>
+       
+        En supposant que <b> r1=r2=r et c1=c2=c </b>, nous pouvons écrire :
+        </p>
+
+        <p> \[Q = \frac {RC}{2RC+RC(1-K)} \]
+
+            \( Q= \frac {1}{3-K} = 0.707 \)
+        
+       
+        
+        </p>
+        <p><b>K=1.586</b></p>
+        <h4>d-Détermination de R3 et R4</h4>
+        <p>maintenant , on lie K à son égalité :</p>
+        <p>K=1+ R4/R3</p>
+        <p>posons R3=10k
+
+
+        on isole R4
+
+        R4=R3*(Q-1)
+
+        R4=33000*(1.586-1)
+        19338 ohm
+        </p>
+
+        <h4>e-Synthèse</h4>
+        <p>le filtre passe bas sallen-key fc=20khz possède comme paramètres:</p>
+        <ul>
+            <li>R1=R2=3617 -> 3k6 +/- 1%</li>
+            <li>R3=33kohm</li>
+            <li>R4=19,338kohm -> 20k +/- 1%</li>
+            <li>C1=C2=2,2nF</li>
+
+        </ul>
+        
+        <p>calcul avec les valeurs normalisés :</p>
+        <ul>
+            <li>fc=20095 hz</li>
+            <li>K=1.606 et</li>
+            <li>Q=0.717</li>
+        </ul>
+        
+        <p><u>Q reste proche de 0.707</u></p>
+        <h4>f-Vérifications et mesures</h4>
+        <p>j'ai réalisé le cablage du filtre : en entrée , un générateur sinus et en sortie , un oscilloscope</p>
+       
+        
+         <div class="imglegend"><img src="images/montage.jpg" alt="schéma de filtre sallen key">
+       <p>figure 2 : montage du sallen-key sur breadboard</p></div>
+        <p>j'ai mesuré l'atténuation en db par octave </p>
+        <p>pour mesurer l'atténuation , j'ai pris la tension peak-to-peak à la sortie du générateur sinus, puis j'applique la formule Gdb = 20*log(vs/ve) en remplacant vs par la tension peak-to-peak à la sortie du filtre par octave de fréquence , voici les résultats :</p>
+        <table>
+        <tr>
+            <td>f (hz)</td>
+            <td>vs (v)</td>
+            <td>G (db)</td>
+        </tr>
+        <tr>
+            <td>1k</td>
+            <td>0.63</td>
+            <td>0</td>
+        </tr>
+        <tr>
+            <td>2k</td>
+            <td>0.63</td>
+            <td>0</td>
+        </tr>
+        <tr>
+            <td>4k</td>
+            <td>0.62</td>
+            <td>-0.13</td>
+        </tr>
+        <tr>
+            <td>8k</td>
+            <td>0.61</td>
+            <td>-0.28</td>
+        </tr>
+        <tr>
+            <td>16k</td>
+            <td>0.52</td>
+            <td>-1.67</td>
+        </tr>
+        <tr>
+            <td>32k</td>
+            <td>0.22</td>
+            <td>-9.14</td>
+        </tr>
+        <tr>
+            <td>48k</td>
+            <td>0.09</td>
+            <td>-16.90</td>
+        </tr>
+    </table>
+    <p><u>voici le diagramme de bode associé : </u></p>
+    
+    
+     <div class="imglegend"><img src="images/Bode.JPG" alt="diagramme de bode obtenu à l'aide de mesures expérimentales">
+            <p>figure 3 : diagramme de bode obtenu à l'aide de mesures expérimentales</p></div>
+    <p>pour mesurer la fréquence de coupure réelle , on sait que Gdb à l'instant de fc vaut -3.</p>
+    <p>grace à la formule 20log(vs/ve), on peut déterminer quelle tension on va atteindre pour un gain de -3</p>
+    <p>vfc = vs/sqrt(2) = 0.707*vs = 0.63*0.707 = 0.45v</p>
+    <p>on remarque expérimentalement en faisant varier la fréquence du génerateur que cette tension est atteinte à 19,2khz</p>
+    <p><u>vérifions maintenant la phase du signal : </u></p>
+    <p>dans un cas idéal ,</p>
+    <p>flesslessfc -> 0°   </p>
+    <p>f=fc  -> -90° </p>
+    <p>f>>fc -> -180°</p>
+    <p>dans mes mesures , j'obtient :</p>
+    <p>flesslessfc -> ~0°   </p>
+    <p>f=fc  -> -51° </p>
+    <p>f>>fc -> -180°</p>
+    
+    
+     <div class="imglegend"><img src="images/phase.jpg" alt="phase a f=fc">
+            <p>figure 4 : phase à f=fc</p></div>
+    
+    
+     <div class="imglegend"><img src="images/phasehf.jpg" alt="schéma de filtre sallen key">
+          <p>figure 5 : phase à F>>fc</p></div>
+    <p>une question se pose , le déphasage dégrade t'il le son ?
+    -en stéréo oui
+    -en mono sans mix avec le signal original , cela est inaudible pour l'oreille humaine,cette structure correspond bien à nos attentes.</p>
+    <p>pourquoi ces différences ? </p>
+    <p>les résistances et condensateurs , et modèles de calcul ne sont pas parfait en pratique, donc certains paramètres se retrouvent dereglés , tel que le facteur Q un peut modifié (cela modifie le comportement de la phase  et la linéarité de la bande passante en conséquence), et aussi R et C qui modifient la fréquence de coupure </p>
+    <p>en cas de besoin de précision , on peut ajouter des composants variables pour ajuster ces valeurs.</p>
+    <h3>5-Structure Complète</h3>
+    <p>voici la structure complète de ce block :</p>
+    <div class="imglegend"><img src="images/block_a_sans_adc.JPG" alt="block a">
+    <p>figure 4 : block a</p></div>
+    <p></p>
+
+        
+
+
+        
+
+    </div>
+    
+    
+</body>
+</html>
+
